@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f766e">
+<title>🏋️ Weekly Plan</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#1a2027; --muted:#5b6672; --line:#e4e8ec;
+    --accent:#0f766e; --accent-soft:#d5efec; --done:#16a34a; --done-soft:#dcfce7;
+    --warn:#b45309; --warn-soft:#fef3c7; --rest:#64748b;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0e1114; --card:#171b20; --ink:#e7ecf1; --muted:#93a1af; --line:#262c33;
+      --accent:#2dd4bf; --accent-soft:#123531; --done:#4ade80; --done-soft:#15311f;
+      --warn:#fbbf24; --warn-soft:#3a2e0c; }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; padding-bottom:96px}
+  header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);
+    padding:10px 14px 0}
+  h1{font-size:18px;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+  h1 small{font-weight:500;color:var(--muted);font-size:12px}
+  .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+  .tab{flex:0 0 auto;border:1px solid var(--line);background:transparent;color:var(--muted);
+    padding:7px 12px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .phasebar{display:flex;gap:6px;margin-bottom:6px}
+  .phasebar .tab{flex:1;text-align:center}
+  .daybar .tab{min-width:44px;text-align:center}
+  .daybar .tab .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--done);
+    margin-left:5px;vertical-align:middle;opacity:0}
+  .daybar .tab.complete .dot{opacity:1}
+  main{max-width:640px;margin:0 auto;padding:14px}
+  .meta{color:var(--muted);font-size:13px;margin:2px 0 14px}
+  .meta b{color:var(--ink)}
+  .sess-title{font-size:20px;margin:0 0 2px;font-weight:800}
+  .sess-focus{color:var(--muted);font-size:13px;margin:0 0 14px;font-style:italic}
+  .note{border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.45;margin:0 0 14px}
+  .note.push{background:var(--accent-soft)}
+  .note.warn{background:var(--warn-soft)}
+  .note b{font-weight:700}
+  .block-h{font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--muted);margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+  .block-h .lbl{background:var(--line);border-radius:6px;padding:2px 7px;font-size:11px;color:var(--muted)}
+  ul.ex{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  li.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;
+    display:flex;align-items:flex-start;gap:11px;transition:border-color .15s,background .15s}
+  li.ex.done{background:var(--done-soft);border-color:var(--done)}
+  .chk{flex:0 0 auto;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);
+    background:transparent;cursor:pointer;display:grid;place-items:center;margin-top:1px}
+  li.ex.done .chk{background:var(--done);border-color:var(--done)}
+  .chk svg{width:15px;height:15px;stroke:#fff;stroke-width:3.2;fill:none;opacity:0}
+  li.ex.done .chk svg{opacity:1}
+  .exbody{flex:1;min-width:0}
+  .exname{font-weight:700;font-size:15px}
+  li.ex.done .exname{text-decoration:line-through;opacity:.6}
+  .exname .newtag{font-size:10px;background:var(--accent);color:#fff;border-radius:5px;padding:1px 5px;
+    margin-left:6px;vertical-align:middle;font-weight:700}
+  .exmeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}
+  .pill{font-size:12px;border-radius:7px;padding:3px 8px;font-weight:600;white-space:nowrap}
+  .pill.reps{background:var(--accent-soft);color:var(--accent)}
+  .pill.rest{background:transparent;border:1px solid var(--line);color:var(--rest);cursor:pointer}
+  .pill.rest:active{transform:scale(.96)}
+  a.vid{font-size:12px;color:var(--accent);text-decoration:none;font-weight:600;border:1px solid var(--line);
+    border-radius:7px;padding:3px 8px;white-space:nowrap}
+  a.vid:hover{background:var(--accent-soft)}
+  .restday{text-align:center;padding:40px 16px;color:var(--muted)}
+  .restday .big{font-size:44px}
+  .restday h2{color:var(--ink);margin:10px 0 6px}
+  .optlist{display:flex;flex-direction:column;gap:8px}
+  .opt{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
+  .opt b{display:block;margin-bottom:2px}
+  .opt span{font-size:13px;color:var(--muted)}
+  footer{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--card);
+    border-top:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:12px}
+  .prog{flex:1}
+  .prog .bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+  .prog .bar i{display:block;height:100%;background:var(--done);width:0;transition:width .25s}
+  .prog small{font-size:12px;color:var(--muted)}
+  .btn{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:9px;
+    padding:8px 11px;font-size:12px;font-weight:700;cursor:pointer}
+  #timer{position:fixed;bottom:78px;right:14px;z-index:40;background:var(--accent);color:#fff;
+    border-radius:14px;padding:12px 16px;font-weight:800;font-size:20px;box-shadow:0 8px 24px rgba(0,0,0,.25);
+    display:none;align-items:center;gap:10px;font-variant-numeric:tabular-nums}
+  #timer.show{display:flex}
+  #timer button{background:rgba(255,255,255,.25);border:0;color:#fff;border-radius:8px;width:28px;height:28px;
+    font-size:16px;cursor:pointer;font-weight:800}
+  @media print{
+    header,footer,#timer,.chk,.pill.rest{display:none!important}
+    body{padding:0;background:#fff}
+    li.ex{break-inside:avoid;border-color:#ccc}
+    a.vid{color:#000}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🏋️ Weekly Plan <small id="today"></small></h1>
+  <div class="tabs phasebar" id="phasebar"></div>
+  <div class="tabs daybar" id="daybar"></div>
+</header>
+
+<main id="main"></main>
+
+<div id="timer">
+  <span id="timerVal">1:30</span>
+  <button id="timerStop" title="Stop">✕</button>
+</div>
+
+<footer>
+  <div class="prog">
+    <div class="bar"><i id="progBar"></i></div>
+    <small id="progTxt">0 / 0 done</small>
+  </div>
+  <button class="btn" id="printBtn">🖨️ Print</button>
+  <button class="btn" id="resetBtn">↺ Reset day</button>
+</footer>
+
+<script>
+/* ---------- data ---------- */
+const V = id => id; // video id passthrough
+// Some hard-coded video IDs went dead (creator removed/privatized them).
+// For those we route to a YouTube search that always surfaces a current demo.
+const DEAD_VIDEOS = {
+  "aU8Kj0lyGjA":"marching in place warm up cardio",
+  "B8jhy1Ce6zw":"world's greatest stretch how to",
+  "T8D8kQ7yWZc":"hip hinge exercise proper form",
+  "NEXgQhSKZjk":"dumbbell reverse lunge proper form",
+  "hj_pfBnW2eM":"single leg romanian deadlift dumbbell form",
+  "OUgsJ8-vTsc":"glute bridge exercise proper form",
+  "lLGDC5AAWlk":"deep squat hold mobility drill",
+  "ywkChgUmB0Q":"dumbbell floor press proper form",
+  "JoCRRZ3zRlI":"bent over dumbbell reverse fly form",
+  "Sord2ncKlIw":"Y T W raises shoulder posture exercise",
+  "lyGCLYnv0aM":"90 90 hip switch stretch mobility",
+  "X8m2z1D4tGc":"thoracic spine rotation exercise",
+  "lU8-Wc4jZ7g":"standing quadriceps stretch how to",
+  "SV7O2j2R7RU":"doorway chest stretch how to",
+  "27a1nkuLxUE":"cross body shoulder stretch",
+};
+const yt = id => DEAD_VIDEOS[id]
+  ? "https://www.youtube.com/results?search_query=" + encodeURIComponent(DEAD_VIDEOS[id])
+  : "https://www.youtube.com/watch?v=" + id;
+
+// shared builders
+const WARMUP = [
+  {n:"March / jog in place", p:"60 sec", v:"aU8Kj0lyGjA"},
+  {n:"Arm circles + shoulder rolls", p:"30 sec", v:"140RTNMciH8"},
+  {n:"Bodyweight squats", p:"10 slow", v:"YaXPRqUwItQ"},
+  {n:"Hip hinges (no weight)", p:"10 reps", v:"T8D8kQ7yWZc"},
+  {n:"Cat–cow", p:"8 slow", v:"kqnua4rHVVA"},
+  {n:"World's greatest stretch", p:"3 /side", v:"B8jhy1Ce6zw"},
+];
+const mobility = (sidePlank, squatHold) => [
+  {n:"Cat–cow", p:"1 × 10", r:"flow", v:"kqnua4rHVVA"},
+  {n:"World's greatest stretch", p:"1 × 5 /side", r:"flow", v:"B8jhy1Ce6zw"},
+  {n:"90/90 hip switches", p:"1 × 8 /side", r:"flow", v:"lyGCLYnv0aM"},
+  {n:"Thoracic spine rotations", p:"1 × 8 /side", r:"flow", v:"X8m2z1D4tGc"},
+  {n:"Glute bridge", p:"1 × 15", r:"flow", v:"OUgsJ8-vTsc"},
+  {n:"Bird dog", p:"1 × 8–10 /side", r:"flow", v:"wiFNA3sqjCA"},
+  {n:"Dead bug", p:"1 × 10 /side", r:"flow", v:"g_BYB0R-4Ws"},
+  {n:"Side plank", p:"1 × "+sidePlank+" /side", r:"flow", v:"K2VljzCC16g"},
+  {n:"Deep squat hold", p:"1 × "+squatHold, r:"flow", v:"lLGDC5AAWlk"},
+  {n:"🧘 Meditation (breath focus)", p:"5 min", r:"", v:"inpok4MKVLM"},
+];
+const MED = {n:"🧘 Meditation — breath focus", p:"5 min", r:"", v:"inpok4MKVLM"};
+const REST_DAY = {type:"rest", title:"Rest", focus:""};
+const SAT = walkNote => ({type:"easy", title:"Easy Conditioning + Mobility", focus:"Your day off — keep it easy. A walk alone counts. No push-ups.", options:[
+  {b:"Brisk walk (default)", s:walkNote},
+  {b:"Walk/jog intervals", s:"alternate jog / walk, only if you feel good"},
+  {b:"Bodyweight circuit", s:"a few rounds of squats / step-ups / marching"},
+  {b:"Then ~10 min mobility", s:"repeat the first 5 Wed drills, finish relaxed"},
+  {b:"🧘 Meditation", s:"5 min to close out"},
+]});
+
+const PHASES = {
+  1:{ name:"Foundation", weeks:"Weeks 1–4", sets:"2 sets", rpe:"RPE 6 · 4 in the tank", rest:"90–120s rest",
+    push:"Mon 3×15–20 · Tue 2×10–15 · Fri 2×10–15",
+    days:{
+      mon:{type:"strength", title:"Lower Body + Core", focus:"Eased for Week 1 — reverse lunge stays at 1 set. Weeks 2–3: take it to 2 sets.",
+        blocks:[
+          {h:"Warmup", lbl:"5 min", items:WARMUP},
+          {h:"Main work", items:[
+            {n:"Goblet Squat", p:"2 × 8–10", r:"90–120s", v:"MeIiIdhvXT4"},
+            {n:"Romanian Deadlift", p:"2 × 8–10", r:"90–120s", v:"hQgFixeXdZo"},
+            {n:"Reverse Lunge", p:"1 × 6–8 /leg", r:"90s", v:"NEXgQhSKZjk"},
+            {n:"Glute Bridge", p:"2 × 10–12", r:"60s", v:"OUgsJ8-vTsc"},
+            {n:"Dead Bug", p:"2 × 8 /side", r:"45s", v:"g_BYB0R-4Ws"},
+            {n:"Plank", p:"2 × 20 sec", r:"45s", v:"ASdvN_XEl_c"},
+            {n:"Push-Ups (LAST, after leg work)", p:"3 × 15–20", r:"60s", v:"IODxDxX7oi4"},
+          ]},
+          {h:"Finish", items:[MED]},
+        ]},
+      tue:{type:"strength", title:"Upper Body + Posture", focus:"Anti-desk day: more pulling than pushing. Push-ups go AFTER the press.",
+        blocks:[
+          {h:"Warmup", lbl:"5 min", items:WARMUP},
+          {h:"Main work", items:[
+            {n:"Dumbbell Floor Press", p:"2 × 8–12", r:"90s", v:"ywkChgUmB0Q"},
+            {n:"Push-Ups (after press)", p:"2 × 10–15", r:"90s", v:"IODxDxX7oi4"},
+            {n:"One-Arm Dumbbell Row", p:"2 × 8–12 /side", r:"90s", v:"roCP6wCXPqo"},
+            {n:"Standing Overhead Press", p:"2 × 8–10", r:"90s", v:"qEwKCR5JCog"},
+            {n:"Bent-Over Reverse Fly", p:"2 × 12–15", r:"60s", v:"JoCRRZ3zRlI"},
+            {n:"Dumbbell Bicep Curl", p:"2 × 10–12", r:"60s", v:"ykJmrZ5v0Oo"},
+            {n:"Overhead Triceps Extension", p:"2 × 10–12", r:"60s", v:"YbX7Wd8jQ-Q"},
+            {n:"Scapular Squeeze (Y-T-W)", p:"2 × 10", r:"45s", v:"Sord2ncKlIw"},
+          ]},
+          {h:"Finish", items:[MED]},
+        ]},
+      wed:{type:"mobility", title:"Mobility + Core", focus:"Active recovery, RPE 4–5. You should feel better, not tired. No push-ups.",
+        blocks:[{h:"Flow — move slowly, breathe", lbl:"25–30 min", items:mobility("15–20 sec","30 sec")}]},
+      thu:REST_DAY,
+      fri:{type:"strength", title:"Full Body + Light Conditioning", focus:"Full-body strength + a short conditioning finisher for stamina.",
+        blocks:[
+          {h:"Warmup", lbl:"5 min", items:WARMUP},
+          {h:"Strength block", items:[
+            {n:"Goblet Squat", p:"2 × 8–12", r:"90s", v:"MeIiIdhvXT4"},
+            {n:"Dumbbell Floor Press", p:"2 × 8–12", r:"90s", v:"ywkChgUmB0Q"},
+            {n:"One-Arm Dumbbell Row", p:"2 × 8–12 /side", r:"90s", v:"roCP6wCXPqo"},
+            {n:"Romanian Deadlift", p:"2 × 8–12", r:"90s", v:"hQgFixeXdZo"},
+            {n:"Plank", p:"2 × 20–30 sec", r:"45s", v:"ASdvN_XEl_c"},
+          ]},
+          {h:"Conditioning finisher", lbl:"~6–8 min", items:[
+            {n:"Marching / step-ups", p:"3 × ~30 sec", r:"", v:"aU8Kj0lyGjA"},
+            {n:"Bodyweight squats", p:"3 × ~30 sec", r:"", v:"YaXPRqUwItQ"},
+            {n:"Push-ups (after press)", p:"2 × 10–15", r:"", v:"IODxDxX7oi4"},
+          ]},
+          {h:"Finish", items:[MED]},
+        ]},
+      sat:SAT("outdoors/treadmill, ~15–20 min, breathe harder but still talk"),
+      sun:REST_DAY,
+    }},
+
+  2:{ name:"Build", weeks:"Weeks 5–8", sets:"3 sets", rpe:"RPE 7 · 3 in the tank", rest:"75–90s rest · 2-sec lowering",
+    push:"Mon 3×15–20 + tempo · Tue 2×12–15 · Fri 2×12–15",
+    days:{
+      mon:{type:"strength", title:"Lower Body + Core", focus:"3 sets now. 2-sec lowering on squat, RDL, lunge.",
+        blocks:[
+          {h:"Warmup", lbl:"5 min", items:WARMUP},
+          {h:"Main work", items:[
+            {n:"Goblet Squat", p:"3 × 8–12", r:"75–90s", v:"MeIiIdhvXT4"},
+            {n:"Romanian Deadlift", p:"3 × 8–12", r:"75–90s", v:"hQgFixeXdZo"},
+            {n:"Reverse Lunge", p:"2 × 8–10 /leg", r:"75–90s", v:"NEXgQhSKZjk"},
+            {n:"Glute Bridge", p:"3 × 12–15", r:"60s", v:"OUgsJ8-vTsc"},
+            {n:"Dead Bug", p:"3 × 8–10 /side", r:"45s", v:"g_BYB0R-4Ws"},
+            {n:"Plank", p:"3 × 30–40 sec", r:"45s", v:"ASdvN_XEl_c"},
+            {n:"Push-Ups (LAST) + 2-sec tempo", p:"3 × 15–20", r:"60s", v:"IODxDxX7oi4"},
+          ]},
+          {h:"Finish", items:[MED]},
+        ]},
+      tue:{type:"strength", title:"Upper Body + Posture", focus:"More pulling than pushing. 2-sec lowering on press and row.",
+        blocks:[
+          {h:"Warmup", lbl:"5 min", items:WARMUP},
+          {h:"Main work", items:[
+            {n:"Dumbbell Floor Press", p:"3 × 8–12", r:"75–90s", v:"ywkChgUmB0Q"},
+            {n:"Push-Ups (after press)", p:"2 × 12–15", r:"75–90s", v:"IODxDxX7oi4"},
+            {n:"One-Arm Dumbbell Row", p:"3 × 8–12 /side", r:"75–90s", v:"roCP6wCXPqo"},
+            {n:"Standing Overhead Press", p:"3 × 8–10", r:"75–90s", v:"qEwKCR5JCog"},
+            {n:"Bent-Over Reverse Fly", p:"3 × 12–15", r:"60s", v:"JoCRRZ3zRlI"},
+            {n:"Dumbbell Bicep Curl", p:"2 × 10–12", r:"60s", v:"ykJmrZ5v0Oo"},
+            {n:"Overhead Triceps Extension", p:"2 × 10–12", r:"60s", v:"YbX7Wd8jQ-Q"},
+            {n:"Scapular Squeeze (Y-T-W)", p:"2 × 10–12", r:"45s", v:"Sord2ncKlIw"},
+          ]},
+          {h:"Finish", items:[MED]},
+        ]},
+      wed:{type:"mobility", title:"Mobility + Core", focus:"Active recovery, RPE 4–5. No push-ups.",
+        blocks:[{h:"Flow — move slowly, breathe", lbl:"25–30 min", items:mobility("20–30 sec","45 sec")}]},
+      thu:REST_DAY,
+      fri:{type:"strength", title:"Full Body + Conditioning", focus:"Full-body strength + a longer conditioning finisher.",
+        blocks:[
+          {h:"Warmup", lbl:"5 min", items:WARMUP},
+          {h:"Strength block", items:[
+            {n:"Goblet Squat", p:"3 × 8–12", r:"75–90s", v:"MeIiIdhvXT4"},
+            {n:"Dumbbell Floor Press", p:"3 × 8–12", r:"75–90s", v:"ywkChgUmB0Q"},
+            {n:"One-Arm Dumbbell Row", p:"3 × 8–12 /side", r:"75–90s", v:"roCP6wCXPqo"},
+            {n:"Romanian Deadlift", p:"3 × 8–12", r:"75–90s", v:"hQgFixeXdZo"},
+            {n:"Plank", p:"3 × 30–40 sec", r:"45s", v:"ASdvN_XEl_c"},
+          ]},
+          {h:"Conditioning finisher", lbl:"~10–12 min", items:[
+            {n:"Marching / step-ups", p:"4 × ~40 sec", r:"", v:"aU8Kj0lyGjA"},
+            {n:"Bodyweight squats", p:"4 × ~40 sec", r:"", v:"YaXPRqUwItQ"},
+            {n:"Push-ups (after press)", p:"2 × 12–15", r:"", v:"IODxDxX7oi4"},
+          ]},
+          {h:"Finish", items:[MED]},
+        ]},
+      sat:SAT("~15–20 min; try walk/jog intervals this phase"),
+      sun:REST_DAY,
+    }},
+
+  3:{ name:"Consolidate", weeks:"Weeks 9–12", sets:"3 sets", rpe:"RPE 8 · 2 in the tank", rest:"60–90s rest · harder variations",
+    push:"Mon 3× harder variation · Tue 2×12–15 · Fri 2×12–15",
+    days:{
+      mon:{type:"strength", title:"Lower Body + Core (unilateral)", focus:"Single-leg work exposes imbalances. Control the descent.",
+        blocks:[
+          {h:"Warmup", lbl:"5 min", items:WARMUP},
+          {h:"Main work", items:[
+            {n:"Bulgarian Split Squat", nu:1, p:"3 × 8–10 /leg", r:"75–90s", v:"2C-uNgKwPLE"},
+            {n:"Single-Leg RDL", nu:1, p:"3 × 8–10 /leg", r:"75–90s", v:"hj_pfBnW2eM"},
+            {n:"Goblet Squat", p:"3 × 10–12", r:"75–90s", v:"MeIiIdhvXT4"},
+            {n:"Glute Bridge (single-leg optional)", p:"3 × 12–15", r:"60s", v:"OUgsJ8-vTsc"},
+            {n:"Dead Bug", p:"3 × 10 /side", r:"45s", v:"g_BYB0R-4Ws"},
+            {n:"Plank", p:"3 × 45–60 sec", r:"45s", v:"ASdvN_XEl_c"},
+            {n:"Push-Ups (LAST, harder variation)", p:"3 × feet-elev / tempo", r:"60s", v:"IODxDxX7oi4"},
+          ]},
+          {h:"Finish", items:[MED]},
+        ]},
+      tue:{type:"strength", title:"Upper Body + Posture", focus:"More pulling than pushing. Push-ups after the press.",
+        blocks:[
+          {h:"Warmup", lbl:"5 min", items:WARMUP},
+          {h:"Main work", items:[
+            {n:"Dumbbell Floor Press", p:"3 × 8–10", r:"75–90s", v:"ywkChgUmB0Q"},
+            {n:"Push-Ups (after press)", p:"2 × 12–15", r:"75–90s", v:"IODxDxX7oi4"},
+            {n:"One-Arm Dumbbell Row", p:"3 × 8–10 /side", r:"75–90s", v:"roCP6wCXPqo"},
+            {n:"Standing Overhead Press", p:"3 × 8–10", r:"75–90s", v:"qEwKCR5JCog"},
+            {n:"Bent-Over Reverse Fly", p:"3 × 12–15", r:"60s", v:"JoCRRZ3zRlI"},
+            {n:"Dumbbell Bicep Curl", p:"2 × 10–12", r:"60s", v:"ykJmrZ5v0Oo"},
+            {n:"Overhead Triceps Extension", p:"2 × 10–12", r:"60s", v:"YbX7Wd8jQ-Q"},
+            {n:"Scapular Squeeze (Y-T-W)", p:"2 × 12", r:"45s", v:"Sord2ncKlIw"},
+          ]},
+          {h:"Finish", items:[MED]},
+        ]},
+      wed:{type:"mobility", title:"Mobility + Core", focus:"Active recovery stays restorative even in Phase 3. No push-ups.",
+        blocks:[{h:"Flow — move slowly, breathe", lbl:"25–30 min", items:mobility("30–40 sec","60 sec")}]},
+      thu:REST_DAY,
+      fri:{type:"strength", title:"Full Body + Conditioning", focus:"Full-body strength + a longer, harder finisher. RPE 8 — still 2 short of failure.",
+        blocks:[
+          {h:"Warmup", lbl:"5 min", items:WARMUP},
+          {h:"Strength block", items:[
+            {n:"Goblet Squat", p:"3 × 10–12", r:"75–90s", v:"MeIiIdhvXT4"},
+            {n:"Dumbbell Floor Press", p:"3 × 8–10", r:"75–90s", v:"ywkChgUmB0Q"},
+            {n:"One-Arm Dumbbell Row", p:"3 × 8–10 /side", r:"75–90s", v:"roCP6wCXPqo"},
+            {n:"Romanian Deadlift", p:"3 × 8–10", r:"75–90s", v:"hQgFixeXdZo"},
+            {n:"Plank", p:"3 × 45–60 sec", r:"45s", v:"ASdvN_XEl_c"},
+          ]},
+          {h:"Conditioning finisher", lbl:"~12–15 min", items:[
+            {n:"Marching / step-ups", p:"5 × ~45 sec", r:"", v:"aU8Kj0lyGjA"},
+            {n:"Bodyweight squats", p:"5 × ~45 sec", r:"", v:"YaXPRqUwItQ"},
+            {n:"Push-ups (after press)", p:"2 × 12–15", r:"", v:"IODxDxX7oi4"},
+          ]},
+          {h:"Finish", items:[MED]},
+        ]},
+      sat:SAT("longer/faster — 25–30 min this phase"),
+      sun:REST_DAY,
+    }},
+};
+
+const DAYS = [["mon","Mon"],["tue","Tue"],["wed","Wed"],["thu","Thu"],["fri","Fri"],["sat","Sat"],["sun","Sun"]];
+const JS_DAY = {0:"sun",1:"mon",2:"tue",3:"wed",4:"thu",5:"fri",6:"sat"};
+
+/* ---------- state ---------- */
+const store = {
+  get(){ try{return JSON.parse(localStorage.getItem("fitProgress")||"{}")}catch(e){return {}} },
+  set(o){ localStorage.setItem("fitProgress", JSON.stringify(o)); },
+};
+let phase = +(localStorage.getItem("fitPhase")||1);
+let day = localStorage.getItem("fitDay") || JS_DAY[new Date().getDay()];
+
+/* ---------- render ---------- */
+const $ = s => document.querySelector(s);
+const main = $("#main");
+
+function tick(){ return '<svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg>'; }
+
+function countExercises(pd){
+  if(!pd.blocks) return 0;
+  return pd.blocks.reduce((a,b)=>a+b.items.length,0);
+}
+function dayComplete(ph,dy){
+  const pd = PHASES[ph].days[dy];
+  if(!pd.blocks) return false;
+  const total = countExercises(pd);
+  const prog = store.get();
+  let done=0, i=0;
+  pd.blocks.forEach(b=>b.items.forEach(()=>{ if(prog["p"+ph+"-"+dy+"-"+(i++)]) done++; }));
+  return total>0 && done===total;
+}
+
+function renderTabs(){
+  $("#phasebar").innerHTML = [1,2,3].map(p=>{
+    const P=PHASES[p];
+    return `<button class="tab ${p===phase?'on':''}" data-p="${p}">P${p} · ${P.name}</button>`;
+  }).join("");
+  $("#daybar").innerHTML = DAYS.map(([k,lbl])=>{
+    const complete = dayComplete(phase,k);
+    return `<button class="tab ${k===day?'on':''} ${complete?'complete':''}" data-d="${k}">${lbl}<span class="dot"></span></button>`;
+  }).join("");
+  $("#phasebar").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{phase=+b.dataset.p;localStorage.setItem("fitPhase",phase);render();});
+  $("#daybar").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{day=b.dataset.d;localStorage.setItem("fitDay",day);render();});
+}
+
+function render(){
+  renderTabs();
+  const P = PHASES[phase], pd = P.days[day];
+  const dayLabel = DAYS.find(d=>d[0]===day)[1];
+  let html = `<div class="meta"><b>${P.name}</b> · ${P.weeks} &nbsp;·&nbsp; ${P.sets} · ${P.rpe} · ${P.rest}</div>`;
+
+  if(pd.type==="rest"){
+    main.innerHTML = html + `<div class="restday"><div class="big">😴</div><h2>${dayLabel} — Rest</h2>
+      <p>No structured session, <b>no push-ups</b>. Keep your morning walk — this is when you get stronger.</p></div>`;
+    updateProg(0,0); return;
+  }
+  if(pd.type==="easy"){
+    html += `<div class="sess-title">${dayLabel} — ${pd.title}</div><div class="sess-focus">${pd.focus}</div>`;
+    html += `<div class="block-h">Pick one conditioning option</div><div class="optlist">`;
+    html += pd.options.map(o=>`<div class="opt"><b>${o.b}</b><span>${o.s}</span></div>`).join("");
+    html += `</div>`;
+    main.innerHTML = html; updateProg(0,0); return;
+  }
+
+  // strength / mobility
+  html += `<div class="sess-title">${dayLabel} — ${pd.title}</div><div class="sess-focus">${pd.focus}</div>`;
+
+  // push-up reminder on Mon/Tue/Fri
+  if(["mon","tue","fri"].includes(day)){
+    html += `<div class="note push">💪 <b>Push-ups:</b> ${P.push}. Only Mon/Tue/Fri, always <b>last</b> — never before your presses.
+      You're building the whole body, not a streak.</div>`;
+  }
+
+  let idx = 0;
+  const prog = store.get();
+  pd.blocks.forEach(b=>{
+    html += `<div class="block-h">${b.h}${b.lbl?`<span class="lbl">${b.lbl}</span>`:""}</div><ul class="ex">`;
+    b.items.forEach(it=>{
+      const id = "p"+phase+"-"+day+"-"+idx;
+      const done = !!prog[id];
+      const restNum = it.r ? (it.r.match(/\d+/)||[])[0] : null;
+      html += `<li class="ex ${done?'done':''}" data-id="${id}">
+        <button class="chk" aria-label="done">${tick()}</button>
+        <div class="exbody">
+          <div class="exname">${it.n}${it.nu?'<span class="newtag">NEW</span>':''}</div>
+          <div class="exmeta">
+            <span class="pill reps">${it.p}</span>
+            ${restNum?`<span class="pill rest" data-sec="${restNum}">⏱ ${it.r}</span>`:(it.r?`<span class="pill rest" style="cursor:default">${it.r}</span>`:"")}
+            ${it.v?`<a class="vid" href="${yt(it.v)}" target="_blank" rel="noopener">▶️ video</a>`:""}
+          </div>
+        </div></li>`;
+      idx++;
+    });
+    html += `</ul>`;
+  });
+  main.innerHTML = html;
+
+  main.querySelectorAll("li.ex").forEach(li=>{
+    li.querySelector(".chk").onclick = ()=>toggle(li.dataset.id);
+  });
+  main.querySelectorAll(".pill.rest[data-sec]").forEach(p=>{
+    p.onclick = ()=>startTimer(+p.dataset.sec);
+  });
+
+  const total = idx;
+  let doneCount=0; for(let i=0;i<total;i++) if(prog["p"+phase+"-"+day+"-"+i]) doneCount++;
+  updateProg(doneCount,total);
+}
+
+function toggle(id){
+  const prog = store.get();
+  if(prog[id]) delete prog[id]; else prog[id]=1;
+  store.set(prog);
+  render();
+}
+function updateProg(done,total){
+  $("#progBar").style.width = total? (done/total*100)+"%":"0%";
+  $("#progTxt").textContent = total? `${done} / ${total} done` : "—";
+}
+
+/* ---------- rest timer ---------- */
+let tId=null, tLeft=0;
+function startTimer(sec){
+  clearInterval(tId); tLeft=sec;
+  $("#timer").classList.add("show"); drawTimer();
+  tId=setInterval(()=>{
+    tLeft--; drawTimer();
+    if(tLeft<=0){ clearInterval(tId); beep(); setTimeout(()=>$("#timer").classList.remove("show"),1200); }
+  },1000);
+}
+function drawTimer(){
+  const m=Math.floor(Math.max(tLeft,0)/60), s=Math.max(tLeft,0)%60;
+  $("#timerVal").textContent = m+":"+String(s).padStart(2,"0");
+}
+$("#timerStop").onclick=()=>{clearInterval(tId);$("#timer").classList.remove("show");};
+function beep(){
+  try{const a=new (window.AudioContext||window.webkitAudioContext)();
+    const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);
+    o.frequency.value=880;o.start();g.gain.setValueAtTime(.15,a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.6);o.stop(a.currentTime+.6);}catch(e){}
+}
+
+/* ---------- footer buttons ---------- */
+$("#printBtn").onclick=()=>window.print();
+$("#resetBtn").onclick=()=>{
+  if(!confirm("Clear all check-marks for "+DAYS.find(d=>d[0]===day)[1]+" (Phase "+phase+")?")) return;
+  const prog=store.get();
+  Object.keys(prog).forEach(k=>{ if(k.startsWith("p"+phase+"-"+day+"-")) delete prog[k]; });
+  store.set(prog); render();
+};
+
+/* ---------- init ---------- */
+(function initToday(){
+  const d=new Date();
+  $("#today").textContent = d.toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric"});
+})();
+render();
+</script>
+</body>
+</html>
